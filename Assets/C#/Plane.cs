@@ -7,7 +7,7 @@ using Unity.MLAgents.Actuators;
 
 public class Plane : Agent
 {
-    public Rigidbody rd;
+    [System.NonSerialized]public Rigidbody rd;
     public DashCamera dashcamera;
     public PlaneRen ren;
 
@@ -34,7 +34,7 @@ public class Plane : Agent
 
     public override void OnEpisodeBegin()
     {
-        // ƒŠƒZƒbƒgˆ—
+        // ï¿½ï¿½ï¿½Zï¿½bï¿½gï¿½ï¿½ï¿½ï¿½
         transform.position = new Vector3(0, 100, 0);
         transform.rotation = Quaternion.Euler(0, 0, 0);
         rd.velocity = Vector3.zero;
@@ -46,6 +46,7 @@ public class Plane : Agent
         limit_y = false;
 
         ren.enabled = true;
+        rd.AddForce(transform.forward * speed, ForceMode.VelocityChange);
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -55,6 +56,9 @@ public class Plane : Agent
         sensor.AddObservation(rd.velocity / 20f);
         sensor.AddObservation(dashPoint);
         sensor.AddObservation(lifePoint);
+
+        
+
     }
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -83,7 +87,7 @@ public class Plane : Agent
             dashPoint--;
         }
 
-        // ‚‚³§ŒÀ§Œäi‚à‚Æ‚ÌMoveˆ—‚ÌÄŒ»j
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½iï¿½ï¿½ï¿½Æ‚ï¿½Moveï¿½ï¿½ï¿½ï¿½ï¿½ÌÄŒï¿½ï¿½j
         if (transform.position.y >= 240 && isFirst) { limit_y = true; isFirst = false; }
         if (transform.position.y >= 240) { if (limit_y) { kari = -10; limit_y = false; } kari *= 0.98f; y = kari; }
         if (transform.position.y < 240) { isFirst = true; }
@@ -98,7 +102,7 @@ public class Plane : Agent
 
         rd.velocity = new Vector3(addZ_x, -addY, addZ_z);
 
-        // –ˆƒXƒeƒbƒv­‚µ•ñV
+        // ï¿½ï¿½ï¿½Xï¿½eï¿½bï¿½vï¿½ï¿½ï¿½ï¿½ï¿½ï¿½V
         AddReward(0.01f);
         if(lifePoint<=0) EndEpisode();
     }
@@ -118,13 +122,13 @@ public class Plane : Agent
     {
         if (other.CompareTag("Ring"))
         {
-            AddReward(rd.velocity.z/10);  // ƒŠƒ“ƒO’Ê‰ß‚Å•ñV
+            AddReward(rd.velocity.z/10);  // ï¿½ï¿½ï¿½ï¿½ï¿½Oï¿½Ê‰ß‚Å•ï¿½V
         }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        //AddReward(-1.0f); // Õ“Ë‚Åƒyƒiƒ‹ƒeƒBF
-        EndEpisode();     // ƒGƒsƒ\[ƒhI—¹
+        //AddReward(-1.0f); // ï¿½Õ“Ë‚Åƒyï¿½iï¿½ï¿½ï¿½eï¿½BF
+        EndEpisode();     // ï¿½Gï¿½sï¿½\ï¿½[ï¿½hï¿½Iï¿½ï¿½
     }
 }
