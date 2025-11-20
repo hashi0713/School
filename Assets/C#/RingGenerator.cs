@@ -24,7 +24,7 @@ public class RingGenerator : MonoBehaviour
         {
             count += dis;
             Instantiate(ring, new Vector3(Random.Range(minx, -minx), Random.Range(miny, maxy), count), Quaternion.identity);
-            dis = Random.Range(750, 1500);
+            dis = Random.Range(750, 1000);
 
             GameObject[] terget;
             terget = GameObject.FindGameObjectsWithTag("Building");
@@ -36,5 +36,20 @@ public class RingGenerator : MonoBehaviour
                 }
             }
         }
+
+        if (player.ringReset)
+        {
+            GameObject[] rings;
+            rings = GameObject.FindGameObjectsWithTag("Ring");
+            foreach(GameObject ring in rings)
+            {
+                Destroy(ring);
+            }
+            //Instantiate(ring, new Vector3(0,75,100), Quaternion.identity);
+            count = start;
+            dis = Random.Range(650, 700);
+            player.ringReset = false;
+        }
+
     }
 }

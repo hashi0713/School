@@ -8,7 +8,6 @@ public class Ring : MonoBehaviour
     private Plane plane;
     private PointCounter counter;
     private DashCamera dashcamera;
-    public GameObject se;
     private void Start()
     {
         plane = GameObject.Find("PlanePos").GetComponent<Plane>();
@@ -22,6 +21,14 @@ public class Ring : MonoBehaviour
             plane.lifePoint--;
             Destroy(gameObject);
         }
+        //if (plane.end)
+        //{
+        //    Debug.Log("aa");
+        //    Instantiate(se,new Vector3(0, 75, 100), Quaternion.identity);
+        //    Destroy(gameObject);
+        //}
+
+
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -32,7 +39,6 @@ public class Ring : MonoBehaviour
             plane.rd.AddForce(Vector3.forward * force, ForceMode.VelocityChange);
             if (!dashcamera.isDash) dashcamera.isDash = true;
             if (dashcamera.isDash) dashcamera.isDash2 = true;
-            Instantiate(se, transform.position, Quaternion.identity);
             Destroy(gameObject);
             
         }

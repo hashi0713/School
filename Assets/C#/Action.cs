@@ -20,15 +20,23 @@ public class Action : MonoBehaviour
         var current = Keyboard.current;
         if (current == null)
             return;
-        if (current.spaceKey.wasPressedThisFrame && count == 0) InvokeRepeating("Tern", 0, 0.01f);
+        if (current.spaceKey.wasPressedThisFrame && count == 0)
+        {
+            //plane.rd.constraints = RigidbodyConstraints.None;
+            InvokeRepeating("Tern", 0, 0.01f);
+        }
         if (plane.tern && count == 0) { InvokeRepeating("Tern", 0, 0.01f); plane.tern = false; }
-        if (count >= 360) { CancelInvoke("Tern"); transform.rotation = new Quaternion(0,0,0,0); count = 0;}
+        if (count >= 360) {
+            CancelInvoke("Tern"); transform.rotation = new Quaternion(0,0,0,0); count = 0;
+            plane.rd.constraints = RigidbodyConstraints.FreezeRotationZ;
+        }
         
     }
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Ring")
         {
+            //plane.rd.constraints = RigidbodyConstraints.None;
             InvokeRepeating("Tern", 0, 0.01f);
         }
     }

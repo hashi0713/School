@@ -11,7 +11,7 @@ public class Resistance : MonoBehaviour
         rd = GetComponent<Rigidbody>();
     }
 
-    void Update()
+    void FixedUpdate()
     {
         rd.AddForce(Vector3.back * rd.velocity.z * coe);
     }
