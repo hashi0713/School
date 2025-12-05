@@ -4,9 +4,8 @@ using UnityEngine;
 
 public class CameraPos : MonoBehaviour
 {
-    [SerializeField] private float x;
-    [SerializeField] private float y;
-    [SerializeField] private float z;
+    [SerializeField] private Vector3 t;
+    [SerializeField] private Vector3 q;
     public Plane plane;
     void Start()
     {
@@ -15,8 +14,8 @@ public class CameraPos : MonoBehaviour
 
     void LateUpdate()
     {
-        transform.rotation = Quaternion.Euler(15, 0, 0);
+        transform.rotation = Quaternion.Euler(q);
 
-        transform.position = plane.transform.position + new Vector3(x, y, z);
+        transform.position = plane.transform.position + t;
     }
 }

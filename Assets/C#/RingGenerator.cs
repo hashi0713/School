@@ -45,7 +45,7 @@ public class RingGenerator : MonoBehaviour
             {
                 Destroy(ring);
             }
-            //Instantiate(ring, new Vector3(0,75,100), Quaternion.identity);
+            Instantiate(ring, new Vector3(0,75,100), Quaternion.identity);
             count = start;
             dis = Random.Range(650, 700);
             player.ringReset = false;

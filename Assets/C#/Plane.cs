@@ -221,7 +221,7 @@ public class Plane : Agent
         //報酬
         RewardFacingNearestRing();
         R_TinyAlive();
-        AddReward(0.001f);
+        AddReward(0.00001f);
 
         //if (StepCount % 300== 0)
         //{
@@ -271,6 +271,7 @@ public class Plane : Agent
     {
         if (other.CompareTag("Ring"))
         {
+            AddReward(2.0f);
             dashPoint++;
         }
     }
