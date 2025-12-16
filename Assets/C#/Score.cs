@@ -23,7 +23,7 @@ public class Score : MonoBehaviour
     void Update()
     {
                 text.text = i.ToString() + "P";
-        if (i < point.point) i++;
-        if (Input.GetMouseButton(0) && !stop) { i = point.point; stop = true; }
+        if (i < PointManeger.Instance.Score) i++;
+        if (Input.GetMouseButton(0) && !stop) { i = PointManeger.Instance.Score; stop = true; }
     }
 }

@@ -6,12 +6,10 @@ public class Ring : MonoBehaviour
 {
     [SerializeField] private float force = 0;
     private Plane plane;
-    private PointCounter counter;
     private DashCamera dashcamera;
     private void Start()
     {
         plane = GameObject.Find("PlanePos").GetComponent<Plane>();
-        counter = GameObject.Find("Point").GetComponent<PointCounter>();
         dashcamera = GameObject.Find("PlaneCamera").GetComponent<DashCamera>();
     }
     private void Update()
@@ -35,7 +33,7 @@ public class Ring : MonoBehaviour
         if (other.gameObject.TryGetComponent(out Plane plane))
         {
             if (plane.dashPoint < 3) plane.dashPoint++;
-            counter.point += (int)plane.rd.velocity.z / 10;
+            PointManeger.Instance.GetScore((int)plane.rd.velocity.z / 10);
             plane.rd.AddForce(Vector3.forward * force, ForceMode.VelocityChange);
             if (!dashcamera.isDash) dashcamera.isDash = true;
             if (dashcamera.isDash) dashcamera.isDash2 = true;

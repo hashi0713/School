@@ -5,8 +5,6 @@ using UnityEngine.UI;
 
 public class PointCounter : MonoBehaviour
 {
-    public int point;
-
     public GameObject counter;
     private Text text;
     void Start()
@@ -16,6 +14,6 @@ public class PointCounter : MonoBehaviour
 
     void Update()
     {
-        text.text = point.ToString() + "P";
+        text.text = PointManeger.Instance.Score.ToString() + "P";
     }
 }

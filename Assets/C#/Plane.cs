@@ -33,6 +33,12 @@ public class Plane : Agent
 
     public bool ringReset = false;
 
+    public enum RewardMode
+    {
+        A, B, C, D
+    }
+
+    [SerializeField] private RewardMode rm;
 
     private void Awake() => rd = GetComponent<Rigidbody>();
 
@@ -47,14 +53,9 @@ public class Plane : Agent
         ren.ResetLastVec(transform.position);
         ren.enabled = true;
 
-        //var sensorComponents = GetComponentsInChildren<SensorComponent>();
-        //foreach (var sc in sensorComponents)
-        //{
-        //    Debug.Log($"[Sensor] {sc.GetType().Name}");
-        //}
-
         dashPoint = 3;
         lifePoint = 3;
+        PointManeger.Instance.ResetScore();
 
         startDash = true;
         lifeT = 0;
@@ -120,15 +121,15 @@ public class Plane : Agent
 
         float _x = 0, _y = 0;
 
-        //Debug.Log(new Vector2(x,y));
-
         if (y < 0 && (transform.rotation.eulerAngles.x <= 95 || transform.rotation.eulerAngles.x >= 290)) _y = -y;
         if (y > 0 && (transform.rotation.eulerAngles.x <= 80 || transform.rotation.eulerAngles.x >= 265)) _y = -y;
         if (x > 0 && (transform.rotation.eulerAngles.y <= 60 || transform.rotation.eulerAngles.y >= 260)) _x = x;
         if (x < 0 && (transform.rotation.eulerAngles.y <= 100 || transform.rotation.eulerAngles.y >= 300)) _x = x;
 
-        if (transform.rotation.eulerAngles.x < 270 && transform.rotation.eulerAngles.x > 180) transform.rotation = Quaternion.Euler(80, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
-
+        Vector3 p = transform.rotation.eulerAngles;
+        if (p.x < 270 && p.x > 180) transform.rotation = Quaternion.Euler(80, p.y, p.z);
+        if (p.y > 85 && p.y <= 180) transform.rotation = Quaternion.Euler(p.x, 85, p.z);
+        if (p.y < 305 && p.y >= 180) transform.rotation = Quaternion.Euler(p.x, 305, p.z);
         Quaternion rotation = Quaternion.Euler(
             transform.rotation.eulerAngles.x - rotSpeed_y * _y,
             transform.rotation.eulerAngles.y + rotSpeed_x * _x,
@@ -146,11 +147,11 @@ public class Plane : Agent
 
     [SerializeField] float alignRewardScale = 0.005f; 
     [SerializeField] float maxAlignDist = 500f;       
-    [SerializeField] float minSpeedForAlign = 2f;     
+    [SerializeField] float minSpeedForAlign = 2f;
 
     void RewardFacingNearestRing()
     {
-        var target = GetNearestRing();  
+        var target = GetNearestRing();
         if (target == null) return;
 
         Vector3 toRing = (target.position - transform.position);
@@ -159,18 +160,13 @@ public class Plane : Agent
 
         float alignment = Vector3.Dot(transform.forward, toRing.normalized);
 
-        float distWeight = Mathf.InverseLerp(maxAlignDist, 0f, dist);
+        float dist01 = Mathf.InverseLerp(0f, maxAlignDist, dist);
+        float distWeight = 1f - dist01;  // 近いほど1
 
         if (rd.velocity.magnitude >= minSpeedForAlign)
         {
-
-            if (alignment > 0.9397f)
-            {
-                
-                float shaped = alignment * distWeight;
-                AddReward(shaped * alignRewardScale);
-
-            }
+            float shaped = alignment * distWeight;
+            AddReward(shaped * alignRewardScale);
         }
     }
 
@@ -193,17 +189,46 @@ public class Plane : Agent
         return best;
     }
 
-    [SerializeField] float stepBonus = 0.0005f;
-    void R_TinyAlive()
+    void DashReward()
     {
-        AddReward(stepBonus);
+        var target = GetNearestRing();
+        if (target == null) return;
+
+        Vector3 toRing = (target.position - transform.position);
+        float dist = toRing.magnitude;
+        if (dist < 0.001f) return;
+
+        float alignment = Vector3.Dot(transform.forward, toRing.normalized);
+
+        if (rd.velocity.magnitude >= minSpeedForAlign)
+        {
+            if (alignment > 0.9397f && dashRequested && Time.time >= nextDashTime && dashPoint > 0)
+            {
+                AddReward(0.3f);
+            }
+        }
     }
+
+    [SerializeField] float stepBonus = 0.0005f;
+    void FWBonus()
+    {
+        if(rd.velocity.z>30)AddReward(stepBonus);
+    }
+
+    [SerializeField] float minusBonus = -0.0005f;
+    void Danger()
+    {
+        if (transform.position.y <= 25) AddReward(minusBonus);
+    }
+
 
     public override void OnActionReceived(ActionBuffers actions)
     {
         int actionX = actions.DiscreteActions[0]; // 0: left, 1: stay, 2: right
         int actionY = actions.DiscreteActions[1]; // 0: down, 1: stay, 2: up
         int dash = actions.DiscreteActions[2];    // 0: no dash, 1: dash
+
+        //Debug.Log(actionX + "," + actionY+ "," + dash);
 
         x = 0f;
         y = 0f;
@@ -217,25 +242,31 @@ public class Plane : Agent
         }
         prevDash = dash;
 
+        //リワードモード
+        switch (rm)
+        {
+            case RewardMode.A:
+                
+                break;
 
-        //報酬
-        RewardFacingNearestRing();
-        R_TinyAlive();
-        AddReward(0.00001f);
-
-        //if (StepCount % 300== 0)
-        //{
-        //Debug.Log($"[{StepCount}] Reward so far: {GetCumulativeReward():F4}");
-        //}
+            case RewardMode.B:
+                FWBonus();
+                RewardFacingNearestRing();
+                Danger();
+                DashReward();
+                break;
+        }
 
         if (lifePoint <= 0 || transform.position.y < 0)
         {
             ringReset = true;
             Debug.Log($"[{StepCount}] Reward so far: {GetCumulativeReward():F4}");
+            Academy.Instance.StatsRecorder.Add("GameScore", PointManeger.Instance.Score);
             EndEpisode();
         }
     }
 
+    //マスク
     public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
     {
 
@@ -271,7 +302,7 @@ public class Plane : Agent
     {
         if (other.CompareTag("Ring"))
         {
-            AddReward(2.0f);
+            AddReward(1.0f);
             dashPoint++;
         }
     }
@@ -285,8 +316,9 @@ public class Plane : Agent
         else
         {
             ringReset = true;
-            if (transform.position.z < 600) AddReward(-5f);
+            AddReward(-1f);
             Debug.Log($"[{StepCount}] Reward so far: {GetCumulativeReward():F4}");
+            Academy.Instance.StatsRecorder.Add("GameScore", PointManeger.Instance.Score);
             EndEpisode();
         }
     }
