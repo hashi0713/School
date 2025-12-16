@@ -303,7 +303,7 @@ Camera:
   field of view: 60
   orthographic: 0
   orthographic size: 5
-  m_Depth: 1
+  m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 23
@@ -6102,6 +6102,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1594663794}
     - target: {fileID: 1128119713172158043, guid: 1da53d9a207954831870a1002ad75339, type: 3}
+      propertyPath: rm
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1128119713172158043, guid: 1da53d9a207954831870a1002ad75339, type: 3}
+      propertyPath: ren
+      value: 
+      objectReference: {fileID: 1594663804}
+    - target: {fileID: 1128119713172158043, guid: 1da53d9a207954831870a1002ad75339, type: 3}
       propertyPath: speed
       value: 20
       objectReference: {fileID: 0}
@@ -6143,7 +6151,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1128119713172158043, guid: 1da53d9a207954831870a1002ad75339, type: 3}
       propertyPath: alignRewardScale
-      value: 0.00001
+      value: 0.00005
+      objectReference: {fileID: 0}
+    - target: {fileID: 1128119713172158043, guid: 1da53d9a207954831870a1002ad75339, type: 3}
+      propertyPath: minSpeedForAlign
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 1803488850407595959, guid: 1da53d9a207954831870a1002ad75339, type: 3}
       propertyPath: m_Convex
@@ -6262,8 +6274,9 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents:
-    - {fileID: 7091923246252666775, guid: 1da53d9a207954831870a1002ad75339, type: 3}
+    - {fileID: 0}
     - {fileID: 152708818364361809, guid: 1da53d9a207954831870a1002ad75339, type: 3}
+    - {fileID: 0}
     - {fileID: 5237292829467112529, guid: 1da53d9a207954831870a1002ad75339, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -6324,6 +6337,17 @@ MonoBehaviour:
   NumStepsToRecord: 1500
   DemonstrationName: Plane_run.demo
   DemonstrationDirectory: 
+--- !u!114 &1594663804 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 962993806513374044, guid: 1da53d9a207954831870a1002ad75339, type: 3}
+  m_PrefabInstance: {fileID: 1594663783}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 527900004}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06ae1e2d6d300414f982909d9485b581, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &1598602191 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: d34e8533c8de8ec45869f9144584d929, type: 3}
